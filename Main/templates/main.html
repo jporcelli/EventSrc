@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>EventSource</title>
+		<meta name="description" content="The best source for events in your area">
+		<meta name="author" content="james porcelli">
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+		<!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+		<link rel="shortcut icon" href="/favicon.ico">
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/main/main.css" />
+		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery-ui-1.10.4.custom.min.css" />
+		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}/include/chosen_v1.1.0/chosen.min.css" />
+
+		<script type="text/javascript"
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzCYO6VZl72pwbB_XYHU5FqhYRlaDtQ_Y&sensor=false"></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="navbar navbar-static-top">
+				<div class="navbar-inner">
+					<div class="container">
+						<ul class="nav">
+							<li>
+								<a class="brand" href="#" style="float: left;">Event Source</a>
+								<form class="navbar-search pull-left" id="event_basic_srch">
+									<input type="text" class="search-query" placeholder="Search" style="font-size: 16px;">
+								</form>
+							</li>
+							<li>
+								<a href="#">Advanced Search</a>
+							</li>
+							<li>
+								<a href="#" id="launch_newevtUI">New Event</a>
+							</li>
+							<li>
+								<a href="#" id="launch_loginUI">Login</a>
+							</li>
+							<li>
+								<a href="#" id="launch_helpUI">Help</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="central_container">
+			<div id="left_middle_area">
+				<div id="map-canvas"></div>
+			</div>
+
+			<div id="right_side_bar">
+				<div id="controls">
+					<form id="filters">
+						<div id="type_filter">
+							<div id="eventfilter_title">
+								<span>Filter By</span>
+							</div>
+							<div id="eventfilter_select">
+								<select multiple class="chosen-select" id="type_filter_select" data-placeholder="Event Type" tabindex="-1" multiple>
+									<!-- @TODO - Load all options using XHR from server -->
+									<option>concert</option>
+									<option>night club event</option>
+								</select>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div id="cur_event_info"></div>
+				<div id="top_events"></div>
+			</div>
+
+		</div>
+
+		<div id="login">
+			<form id="loginform">
+				<div class="control-group">
+					<div class="controls">
+						<input type="text" id="inputEmail" placeholder="Email">
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+						<input type="password" id="inputPassword" placeholder="Password">
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+						<label class="checkbox">
+							<input type="checkbox">
+							Remember me </label>
+						<button type="submit" class="btn">
+							Sign in
+						</button>
+					</div>
+				</div>
+			</form>
+			<div id="fbauth">
+				<fb:login-button scope="public_profile,email" onlogin="fbCheckLoginState();"></fb:login-button>
+			</div>
+		</div>
+		<div id="new_event">
+			<form id="neweventform">
+				<div class="control-group">
+					<div class="controls">
+						<input type="text" id="evt_title" placeholder="Title">
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+						<input type="text" id="evt_location" placeholder="Address">
+					</div>
+				</div>
+				<textarea rows="3" placeholder="Description"></textarea>
+				<div class="control-group">
+					<div class="controls">
+						<button type="submit" class="btn" onclick="create_event">
+							Create
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<script type="text/javascript" src="{{STATIC_URL}}js/jquery-1.10.2.js"></script>
+		<!-- @TODO -  Lazy load jquery-ui js -->
+		<script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.10.4.custom.min.js"></script>
+		<script type="text/javascript" src="{{STATIC_URL}}include/chosen_v1.1.0/chosen.jquery.min.js"></script>
+		<script type="text/javascript" src="{{STATIC_URL}}js/main/main.js"></script>
+	</body>
+</html>

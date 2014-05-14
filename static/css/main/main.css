@@ -1,0 +1,85 @@
+/**
+ * 	Main document cascading style sheet (external)
+ */
+
+html {
+	height: 100%
+}
+
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0
+}
+
+div#central_container {
+
+}
+
+div#fbauth {
+	float: left;
+}
+
+.ui-dialog-titlebar {
+	/*display: none;*/
+}
+
+.ui-dialog .ui-dialog-title {
+	color: #777;
+	font-weight: 500;
+}
+
+#loginform {
+	margin-top: 25px;
+}
+
+#eventfilter_title {
+	margin-bottom: 7px;
+}
+
+input, textarea, .uneditable-input {
+	width: 255px;
+}
+
+#neweventform {
+	margin-top: 20px;
+}
+
+div#left_middle_area {
+	width: 70%;
+	height: 700px;
+	float: left;
+	padding-top: 25px;
+	padding-left: 25px;
+}
+
+div#right_side_bar {
+	width: 25%;
+	float: right;
+	padding-top: 25px;
+}
+
+div#cur_event_info {
+	height: 200px;
+}
+
+div#top_events {
+	height: 300px;
+}
+
+div#new_event {
+
+}
+
+#event_basic_srch {
+	width: 400px;
+}
+
+#event_basic_srch input {
+	width: 75%;
+}
+
+#map-canvas {
+	height: 100%
+}
+
