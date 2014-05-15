@@ -3,13 +3,13 @@ from django.contrib.auth.models import User
 
 
 class Event(models.Model):
-    owner = models.ForeignKey(User)
-    latitude = models.DecimalField(max_digits=20, decimal_places=14)
-    longitude = models.FloatField(max_digits=20, decimal_places=14)
-    address = models.CharField()
-    description = models.CharField()
-    title = models.CharField()
-    contact_phone = models.CharField()
+    owner = models.ForeignKey(User, db_index = True)
+    latitude = models.DecimalField(max_digits = 20, decimal_places = 14, db_index = True)
+    longitude = models.DecimalField(max_digits = 20, decimal_places = 14, db_index = True)
+    address = models.CharField(max_length = 150)
+    description = models.TextField()
+    title = models.CharField(max_length = 150)
+    contact_phone = models.CharField(max_length = 45)
     contact_email = models.EmailField()
     event_date = models.DateTimeField()
     event_end_date = models.DateTimeField()

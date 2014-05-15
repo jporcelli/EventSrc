@@ -20,16 +20,18 @@
 		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/main/main.css" />
 		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery-ui-1.10.4.custom.min.css" />
 		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}/include/chosen_v1.1.0/chosen.min.css" />
-
+		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}include/bootstrap-datetimepicker-0.0.11/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}include/datetimepicker-master/jquery.datetimepicker.css" />
+		
 		<script type="text/javascript"
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzCYO6VZl72pwbB_XYHU5FqhYRlaDtQ_Y&sensor=false"></script>
 	</head>
 
 	<body>
-		<div class="container">
+		<div class="container-fluid">
 			<div class="navbar navbar-static-top">
 				<div class="navbar-inner">
-					<div class="container">
+					<div class="container" style="width: 100%;">
 						<ul class="nav">
 							<li>
 								<a class="brand" href="#" style="float: left;">Event Source</a>
@@ -44,18 +46,30 @@
 								<a href="#" id="launch_newevtUI">New Event</a>
 							</li>
 							<li>
+								{% if user.is_authenticated %}
+								<a href="#" id="logout">Logout</a>
+								{% else %}
 								<a href="#" id="launch_loginUI">Login</a>
+								{% endif %}
 							</li>
 							<li>
 								<a href="#" id="launch_helpUI">Help</a>
+							</li>
+							<li>
+								{% if user.is_authenticated %}
+								<a href="#">{{user.username}}</a>
+								{% endif %}
 							</li>
 						</ul>
 					</div>
 				</div>
 			</div>
 		</div>
+		<div id="user_block">
 
-		<div id="central_container">
+		</div>
+
+		<div id="central_container" style="clear: both;">
 			<div id="left_middle_area">
 				<div id="map-canvas"></div>
 			</div>
@@ -111,32 +125,48 @@
 			</div>
 		</div>
 		<div id="new_event">
-			<form id="neweventform">
+			<form id="neweventform" method="post">
 				<div class="control-group">
 					<div class="controls">
-						<input type="text" id="evt_title" placeholder="Title">
+						<label for="evt_title">Please provide a title for the event</label>
+						<input name="title" type="text" id="evt_title" placeholder="Title" class="new_event_inputfield" required>
 					</div>
 				</div>
 				<div class="control-group">
 					<div class="controls">
-						<input type="text" id="evt_location" placeholder="Address">
+						<input name="address" type="text" id="evt_location" placeholder="Address" class="new_event_inputfield">
 					</div>
 				</div>
-				<textarea rows="3" placeholder="Description"></textarea>
+				<textarea rows="6" placeholder="Description" class="new_event_textfield"></textarea>
+				<div class="control-group">
+					<select name="type" class="chosen-select" id="type_newevent_select" data-placeholder="Event Type" tabindex="-1" multiple>
+						<!-- @TODO - Load all options using XHR from server -->
+						<option>concert</option>
+						<option>night club event</option>
+					</select>
+					<div id="new_event_datetime_con">
+						<div id="datetimepicker_container" class="input-append date">
+							<input name="datetime" data-format="dd/MM/yyyy hh:mm:ss" type="text" style="width: 95%; font-size: 16px;" id="datetimepicker" >
+							<span class="add-on"> <i data-time-icon="icon-time" data-date-icon="icon-calendar"> </i> </span>
+						</div>
+					</div>
+				</div>
 				<div class="control-group">
 					<div class="controls">
-						<button type="submit" class="btn" onclick="create_event">
+						<button type="button" id="submit_newevent" class="btn" onclick="create_event">
 							Create
 						</button>
 					</div>
 				</div>
 			</form>
 		</div>
+		
+		<input type="hidden" id="date_store" />
 
 		<script type="text/javascript" src="{{STATIC_URL}}js/jquery-1.10.2.js"></script>
-		<!-- @TODO -  Lazy load jquery-ui js -->
 		<script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.10.4.custom.min.js"></script>
 		<script type="text/javascript" src="{{STATIC_URL}}include/chosen_v1.1.0/chosen.jquery.min.js"></script>
+		<script type="text/javascript" src="{{STATIC_URL}}include/datetimepicker-master/jquery.datetimepicker.js"></script>
 		<script type="text/javascript" src="{{STATIC_URL}}js/main/main.js"></script>
 	</body>
 </html>

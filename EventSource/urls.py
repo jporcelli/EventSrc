@@ -10,7 +10,11 @@ urlpatterns = [
     #url(r'^$', 'EventSource.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
     
-    url(r'^$', 'Main.views.home', name='home'),
+    url(r'^$', 'Main.views.home', name = 'home'),
+    
+    url(r'^Login/Fb/$', 'Main.views.fbLogin', name = 'fblogin'),
+    
+    url(r'^Logout/$', 'Main.views._logout', name = 'logout'),
 
     url(r'^admin/', include(admin.site.urls))]  
     

@@ -16,6 +16,34 @@ div#central_container {
 
 }
 
+.header {
+	width: 100%;
+}
+
+.new_event_inputfield {
+	width: 95%;
+	height: 24px;
+}
+
+.new_event_textfield {
+	width: 95%;
+}
+
+div#new_event_datetime_con{
+	margin-top: 5px;
+}
+
+
+#type_newevent_select {
+	height: 120px;
+	overflow-y: auto;
+}
+
+div#user_block {
+	float: left;
+	width: 220px;
+}
+
 div#fbauth {
 	float: left;
 }

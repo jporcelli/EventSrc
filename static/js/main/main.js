@@ -22,11 +22,12 @@ function main_onload() {
 	var fb_dev = '1446696428905632';
 
 	$('#type_filter_select').chosen();
+	$('#type_newevent_select').chosen();
 
 	$("#login").dialog({
 		autoOpen : false,
 		modal : true,
-		title : "Login"
+		title : "Login",
 	});
 
 	$("#launch_loginUI").click(function() {
@@ -36,27 +37,21 @@ function main_onload() {
 	$("#new_event").dialog({
 		autoOpen : false,
 		modal : true,
-		title : "New Event"
+		title : "New Event",
+		width : 350,
+		height : 500,
 	});
 
 	$("#launch_newevtUI").click(function() {
 		$("#new_event").dialog("open");
 	});
-
-	window.fbAsyncInit = function() {
-		FB.init({
-			appId : fb_test1,
-			cookie : true, // enable cookies to allow the server to access
-			// the session
-			xfbml : true, // parse social plugins on this page
-			version : 'v2.0' // use version 2.0
-		});
-
-		FB.getLoginStatus(function(response) {
-			fbStatusChangeCallback(response);
-		});
-
-	};
+	
+	var datetime;
+	
+	$('#datetimepicker').datetimepicker({
+		closeOnDateSelect : false,
+		lazyInit : true,
+	});
 
 	if ('geolocation' in navigator) {
 
@@ -70,30 +65,74 @@ function main_onload() {
 	} else {
 		geolocationNotAvailable();
 	}
+
+	window.fbAsyncInit = function() {
+		FB.init({
+			appId : fb_dev,
+			cookie : true, // enable cookies to allow the server to access
+			// the session
+			xfbml : true, // parse social plugins on this page
+			version : 'v2.0' // use version 2.0
+		});
+
+		FB.getLoginStatus(function(response) {
+			fbStatusChangeCallback(response);
+		});
+
+		FB.Event.subscribe('auth.authResponseChange', fbStatusChangeCallback);
+	};
+	
+	$('submit_newevent').click(processNewEvent);
 }
 
 function create_event(evt) {
 	console.log('New event');
 }
 
+// Full docs on the response object can be found in the documentation
+// for FB.getLoginStatus().
 function fbStatusChangeCallback(response) {
-	console.log('FB status change callback');
+	console.log('FB status change event');
 	console.log(response);
+
+	$('#logout').click(function(e) {
+		$.ajax({
+			dataType : 'json',
+			url : '/Logout/',
+			data : {
+			},
+			success : function(data) {
+				console.log('Logout');
+				console.log(data);
+			}
+		});
+	});
 
 	// The response object is returned with a status field that lets the
 	// app know the current login status of the person.
-	// Full docs on the response object can be found in the documentation
-	// for FB.getLoginStatus().
 	if (response.status === 'connected') {
 		// Logged into your app and Facebook.
-		//testAPI();
+
+		var accessToken = response.authResponse.accessToken;
+		var userId = response.authResponse.userID;
+
+		$.ajax({
+			dataType : 'json',
+			url : '/Login/Fb/',
+			data : {
+				'accessToken' : accessToken,
+				'userId' : userId
+			},
+			success : function(data) {
+				console.log('Django response from FB login');
+				console.log(data);
+			}
+		});
 	} else if (response.status === 'not_authorized') {
 		// The person is logged into Facebook, but not your app.
-		//document.getElementById('status').innerHTML = 'Please log ' + 'into this app.';
 	} else {
 		// The person is not logged into Facebook, so we're not sure if
 		// they are logged into this app or not.
-		//document.getElementById('status').innerHTML = 'Please log ' + 'into Facebook.';
 	}
 }
 
@@ -155,7 +194,7 @@ function geo_success(position) {
 	var lng = position.coords.longitude;
 
 	var mapcanvas = document.getElementById('map-canvas');
-	
+
 	//Make sure gmaps not already initialized
 	if (mapcanvas.children.length === 0) {
 		//Init google maps
@@ -197,6 +236,10 @@ function geo_error() {
 
 function geolocationNotAvailable() {
 
+}
+
+function processNewEvent(e){
+	
 }
 
 
