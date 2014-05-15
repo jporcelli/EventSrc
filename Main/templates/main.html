@@ -88,6 +88,9 @@
 									<option>night club event</option>
 								</select>
 							</div>
+							<div id="eventfilter_location">
+								<input type="text" placeholder="Location" />
+							</div>
 						</div>
 					</form>
 				</div>
@@ -129,27 +132,28 @@
 				<div class="control-group">
 					<div class="controls">
 						<!--<label for="evt_title">Please provide a title for the event</label>-->
-						<input name="title" type="text" id="evt_title" placeholder="Title" class="new_event_inputfield" required>
+						<input name="title" type="text" id="evt_title" placeholder="Event Title" class="new_event_inputfield" required>
 					</div>
 				</div>
 				<div class="control-group">
 					<div class="controls">
 						<!--<label for="evt_location">Please provide a location for the event</label>-->
-						<input name="address" type="text" id="evt_location" placeholder="Address" class="new_event_inputfield" required>
+						<input name="address" type="text" id="evt_location" placeholder="Event Address" class="new_event_inputfield" required>
 					</div>
 				</div>
-				<textarea rows="6" placeholder="Description" class="new_event_textfield"></textarea>
+				<textarea rows="6" name="descrioption" id="event_description" placeholder="Event Description" class="new_event_textfield" style="margin-bottom: 15px;"></textarea>
 				<div class="control-group">
 					<!--<label for="type_newevent_select">Please categorize the type of the event</label>-->
 					<select required name="type" class="chosen-select" id="type_newevent_select" data-placeholder="Event Type" tabindex="-1">
 						<!-- @TODO - Load all options using XHR from server -->
+						<option></option>
 						<option>concert</option>
 						<option>night club event</option>
 					</select>
 					<div id="new_event_datetime_con">
 						<div id="datetimepicker_container" class="input-append date">
 							<!--<label for="datetimepicker">Please provide the date and time for the event</label>-->
-							<input name="datetime" data-format="dd/MM/yyyy hh:mm:ss" type="text" style="width: 95%; font-size: 16px;" id="datetimepicker" required>
+							<input placeholder="Event Time" name="datetime" data-format="dd/MM/yyyy hh:mm:ss" type="text" style="width: 95%; font-size: 16px;" id="datetimepicker" required>
 							<span class="add-on" id="datetime_calndr-icon"> <i class="icon-calendar"> </i> </span>
 						</div>
 					</div>

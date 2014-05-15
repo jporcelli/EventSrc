@@ -84,22 +84,28 @@ def _logout(request):
     return put_json({'status' : 'success'})
 
 """
-Form for new event submission
-"""
-class NewEventForm(forms.Form):
-    title = forms.CharField()
-    address = forms.CharField()
-    type = forms.CharField()
-    datetime = forms.CharField()
-
-"""
 Persist a new event 
 """
 def newEvent(request):
-    newEvent = NewEventForm(request.POST)
-    event = newEvent.save()
+    title = request.POST.get('title')
+    description = request.POST.get('description')
+    address = request.POST.get('address')
+    type = request.POST.get('type')
+    datetime = request.POST.get('datetime')
+    lat = request.POST.get('lat')
+    lng = request.POST.get('lng')
+    
+    
+    #If this doesnt work, @todo: does the sessionid cookie correspond to the _id PK
+    #of users in the DB? if so simply set the uid field to that PK value
+    user = request.session['user']
+    
+    event = Event(owner=user.id, )
     
     if event is not None:
+        return put_json({'status' : 'success'})
+    else:
+        return put_json({'status' : 'error', 'message' : 'event not saved'})
         
 """
 Helper method for returning JSON content

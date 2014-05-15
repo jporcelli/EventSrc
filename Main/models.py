@@ -11,5 +11,5 @@ class Event(models.Model):
     title = models.CharField(max_length = 150)
     contact_phone = models.CharField(max_length = 45)
     contact_email = models.EmailField()
-    event_date = models.DateTimeField()
-    event_end_date = models.DateTimeField()
+    event_startdate = models.DateTimeField()
+    event_enddate = models.DateTimeField()

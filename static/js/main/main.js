@@ -46,7 +46,6 @@ function main_onload() {
 		$("#new_event").dialog("open");
 	});
 
-
 	$('#datetimepicker').datetimepicker({
 		closeOnDateSelect : false,
 		lazyInit : true,
@@ -57,13 +56,13 @@ function main_onload() {
 	}, function() {
 		$(this).css('cursor', '');
 	});
-	
+
 	$('#datetime_calndr-icon').click(function(e) {
 		console.log('calender icon datetimepicker press');
 		$('#datetimepicker').focus().click();
 
 	});
-	
+
 	//Initialize the html5 geocoding api
 	if ('geolocation' in navigator) {
 		var geo_options = {
@@ -141,7 +140,7 @@ function fbStatusChangeCallback(response) {
 
 		var accessToken = response.authResponse.accessToken;
 		var userId = response.authResponse.userID;
-		
+
 		//@TODO
 		//Should try to prevent unneccesary login requests each time this
 		//callback is executed since it can be for a number of reasons
@@ -271,55 +270,80 @@ function processNewEvent(form) {
 	console.log('processing new event form submission');
 	console.log('Event information has been validated');
 	
+	//Form data
 	var title = form.find("input[name='title']");
 	var address = form.find("input[name='location']");
 	var type = form.find("input[name='type']");
 	var datetime = form.find("input[name='datetime']");
+	var description = form.find("textarea[name='description']");
 	
+	//Info window markup
+	var gmapsMarkerEventDisplay = 
+		'<div class="eventmarker_display">\
+			<span class="eventmarker_display_title">\
+			' + title + '\
+			</span>\
+			<hr />\
+			<p>' + address + '</p>\
+			<p>' + datetime + '</p>\
+			<p>' + description + '</p>\
+		</div>';
+
 	//Obtain lat,lng conversion from address with geocode
-	
-	geoCodeAddress({'address' : address}, function(results, status){
-		   	if (status == google.maps.GeocoderStatus.OK) {
-		   		//The resulting lat, lng tuple for the address
-		   		
-		   		
-		   		//persist the new event
-				$.ajax({
-					dataType : 'json',
-					url : '/Event/Submit/',
-					data : {
-						'title' : title,
-						'address' : address,
-						'type' : type,
-						'datetime' : datetime,
-						/*
-						'lat' : ,
-						'lng' : ,
-						'uid' : ,
-						*/
-					},
-					success : function(data) {
-						console.log('Django response from new event submission');
-						console.log(data);
-					}
-				});
-		   		
-		   		//Center the map around the specified event location
-        		map.setCenter(results[0].geometry.location);
-        		
-        		//Setup a new marker on the location
-        		var marker = new google.maps.Marker({
-            		map: map,
-            		position: results[0].geometry.location
-        		});
-      		} else {
-        		//Geocode failed, check the status code
-      		}
+
+	geoCodeAddress({
+		'address' : address
+	}, function(results, status) {
+		if (status == google.maps.GeocoderStatus.OK) {
+			console.log('Google maps geocoding response');
+			console.log(results);
+
+			//persist the new event
+			$.ajax({
+				dataType : 'json',
+				url : '/Event/Submit/',
+				data : {
+					'title' : title,
+					'description' : description,
+					'address' : address,
+					'type' : type,
+					'datetime' : datetime,
+					 'lat' : results[0].geometry.location.lat(),
+					 'lng' : results[0].geometry.location.lng(),
+				},
+				success : function(data) {
+					console.log('Django response from new event submission');
+					console.log(data);
+				}
+			});
+
+			//Center the map around the specified event location
+			map.setCenter(results[0].geometry.location);
+
+			//Google maps info window for the event map marker
+			var infowindow = new google.maps.InfoWindow({
+				content : gmapsMarkerEventDisplay
+			});
+
+			//Setup a new marker on the location
+			var marker = new google.maps.Marker({
+				map : map,
+				position : results[0].geometry.location
+			});
+			
+			//Add display info window to marker onclick event handler
+			google.maps.event.addListener(marker, 'click', function() {
+    			infowindow.open(map,marker);
+  			});
+  			
+		} else {
+			//Geocode failed, check the status code
+		}
 	});
 }
 
 function geoCodeAddress(address, callback) {
-    geocoder.geocode(address, callback);
+	geocoder.geocode(address, callback);
 }
 
 
