@@ -2,7 +2,7 @@
  * @author james porcelli
  */
 
-// @note: DOM not loaded
+//@TODO - Move to document body??
 // Load the SDK asynchronously
 ( function(d, s, id) {
 		var js, fjs = d.getElementsByTagName(s)[0];
@@ -45,16 +45,27 @@ function main_onload() {
 	$("#launch_newevtUI").click(function() {
 		$("#new_event").dialog("open");
 	});
-	
-	var datetime;
-	
+
+
 	$('#datetimepicker').datetimepicker({
 		closeOnDateSelect : false,
 		lazyInit : true,
 	});
 
-	if ('geolocation' in navigator) {
+	$('#datetime_calndr-icon').hover(function() {
+		$(this).css('cursor', 'pointer');
+	}, function() {
+		$(this).css('cursor', '');
+	});
+	
+	$('#datetime_calndr-icon').click(function(e) {
+		console.log('calender icon datetimepicker press');
+		$('#datetimepicker').focus().click();
 
+	});
+	
+	//Initialize the html5 geocoding api
+	if ('geolocation' in navigator) {
 		var geo_options = {
 			enableHighAccuracy : true,
 			maximumAge : 30000,
@@ -66,6 +77,7 @@ function main_onload() {
 		geolocationNotAvailable();
 	}
 
+	//Initialize FB api
 	window.fbAsyncInit = function() {
 		FB.init({
 			appId : fb_dev,
@@ -81,10 +93,23 @@ function main_onload() {
 
 		FB.Event.subscribe('auth.authResponseChange', fbStatusChangeCallback);
 	};
-	
-	$('submit_newevent').click(processNewEvent);
+
+	//Validate the new event form
+	$('#neweventform').validate({
+		submitHandler : function(form) {
+			processNewEvent(form);
+		},
+
+		errorPlacement : function(error, element) {
+			console.log('new event form validation');
+			console.log(error);
+			error.css('color', '#f00');
+			error.appendTo(element.parent('div'));
+		},
+	});
 }
 
+//@TODO - needed??
 function create_event(evt) {
 	console.log('New event');
 }
@@ -95,6 +120,7 @@ function fbStatusChangeCallback(response) {
 	console.log('FB status change event');
 	console.log(response);
 
+	//@TODO - should this call be inside this method??
 	$('#logout').click(function(e) {
 		$.ajax({
 			dataType : 'json',
@@ -115,7 +141,11 @@ function fbStatusChangeCallback(response) {
 
 		var accessToken = response.authResponse.accessToken;
 		var userId = response.authResponse.userID;
-
+		
+		//@TODO
+		//Should try to prevent unneccesary login requests each time this
+		//callback is executed since it can be for a number of reasons
+		//@TODO - Should set an indicator that the client is already authenticated
 		$.ajax({
 			dataType : 'json',
 			url : '/Login/Fb/',
@@ -147,6 +177,7 @@ function fbCheckLoginState() {
 function initialize(lng, lat) {
 
 	//@TODO - This is Sydney, Australio, update to world view, or maybe educated guess of client pos
+	//Maybe use Google service as fallback
 	if (!lng || !lat) {
 		lng = -34.397;
 		lat = 150.644;
@@ -161,9 +192,7 @@ function initialize(lng, lat) {
 	geocoder = new google.maps.Geocoder();
 
 	google.maps.event.addListener(map, 'click', gmapsEvent_Click);
-
 	google.maps.event.addListener(map, 'zoom_changed', gmapsEvent_ZoomChange);
-
 	google.maps.event.addListener(map, 'dragend', gmapsEvent_DragEnd);
 
 }
@@ -238,8 +267,59 @@ function geolocationNotAvailable() {
 
 }
 
-function processNewEvent(e){
+function processNewEvent(form) {
+	console.log('processing new event form submission');
+	console.log('Event information has been validated');
 	
+	var title = form.find("input[name='title']");
+	var address = form.find("input[name='location']");
+	var type = form.find("input[name='type']");
+	var datetime = form.find("input[name='datetime']");
+	
+	//Obtain lat,lng conversion from address with geocode
+	
+	geoCodeAddress({'address' : address}, function(results, status){
+		   	if (status == google.maps.GeocoderStatus.OK) {
+		   		//The resulting lat, lng tuple for the address
+		   		
+		   		
+		   		//persist the new event
+				$.ajax({
+					dataType : 'json',
+					url : '/Event/Submit/',
+					data : {
+						'title' : title,
+						'address' : address,
+						'type' : type,
+						'datetime' : datetime,
+						/*
+						'lat' : ,
+						'lng' : ,
+						'uid' : ,
+						*/
+					},
+					success : function(data) {
+						console.log('Django response from new event submission');
+						console.log(data);
+					}
+				});
+		   		
+		   		//Center the map around the specified event location
+        		map.setCenter(results[0].geometry.location);
+        		
+        		//Setup a new marker on the location
+        		var marker = new google.maps.Marker({
+            		map: map,
+            		position: results[0].geometry.location
+        		});
+      		} else {
+        		//Geocode failed, check the status code
+      		}
+	});
+}
+
+function geoCodeAddress(address, callback) {
+    geocoder.geocode(address, callback);
 }
 
 

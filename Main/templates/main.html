@@ -125,35 +125,38 @@
 			</div>
 		</div>
 		<div id="new_event">
-			<form id="neweventform" method="post">
+			<form id="neweventform" method="post" action="#">
 				<div class="control-group">
 					<div class="controls">
-						<label for="evt_title">Please provide a title for the event</label>
+						<!--<label for="evt_title">Please provide a title for the event</label>-->
 						<input name="title" type="text" id="evt_title" placeholder="Title" class="new_event_inputfield" required>
 					</div>
 				</div>
 				<div class="control-group">
 					<div class="controls">
-						<input name="address" type="text" id="evt_location" placeholder="Address" class="new_event_inputfield">
+						<!--<label for="evt_location">Please provide a location for the event</label>-->
+						<input name="address" type="text" id="evt_location" placeholder="Address" class="new_event_inputfield" required>
 					</div>
 				</div>
 				<textarea rows="6" placeholder="Description" class="new_event_textfield"></textarea>
 				<div class="control-group">
-					<select name="type" class="chosen-select" id="type_newevent_select" data-placeholder="Event Type" tabindex="-1" multiple>
+					<!--<label for="type_newevent_select">Please categorize the type of the event</label>-->
+					<select required name="type" class="chosen-select" id="type_newevent_select" data-placeholder="Event Type" tabindex="-1">
 						<!-- @TODO - Load all options using XHR from server -->
 						<option>concert</option>
 						<option>night club event</option>
 					</select>
 					<div id="new_event_datetime_con">
 						<div id="datetimepicker_container" class="input-append date">
-							<input name="datetime" data-format="dd/MM/yyyy hh:mm:ss" type="text" style="width: 95%; font-size: 16px;" id="datetimepicker" >
-							<span class="add-on"> <i data-time-icon="icon-time" data-date-icon="icon-calendar"> </i> </span>
+							<!--<label for="datetimepicker">Please provide the date and time for the event</label>-->
+							<input name="datetime" data-format="dd/MM/yyyy hh:mm:ss" type="text" style="width: 95%; font-size: 16px;" id="datetimepicker" required>
+							<span class="add-on" id="datetime_calndr-icon"> <i class="icon-calendar"> </i> </span>
 						</div>
 					</div>
 				</div>
 				<div class="control-group">
 					<div class="controls">
-						<button type="button" id="submit_newevent" class="btn" onclick="create_event">
+						<button type="submit" id="submit_newevent" class="btn" onclick="create_event">
 							Create
 						</button>
 					</div>
@@ -167,6 +170,7 @@
 		<script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.10.4.custom.min.js"></script>
 		<script type="text/javascript" src="{{STATIC_URL}}include/chosen_v1.1.0/chosen.jquery.min.js"></script>
 		<script type="text/javascript" src="{{STATIC_URL}}include/datetimepicker-master/jquery.datetimepicker.js"></script>
+		<script type="text/javascript" src="{{STATIC_URL}}include/jquery-validation-1.12.0/dist/jquery.validate.min.js"></script>
 		<script type="text/javascript" src="{{STATIC_URL}}js/main/main.js"></script>
 	</body>
 </html>

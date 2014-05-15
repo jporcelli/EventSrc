@@ -15,6 +15,8 @@ urlpatterns = [
     url(r'^Login/Fb/$', 'Main.views.fbLogin', name = 'fblogin'),
     
     url(r'^Logout/$', 'Main.views._logout', name = 'logout'),
+    
+    url(r'^Event/Submit/$', 'Main.views.newEvent', name = 'newevent'),
 
     url(r'^admin/', include(admin.site.urls))]  
     

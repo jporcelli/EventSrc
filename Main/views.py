@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django import forms
 import urllib2
 import json
 
@@ -38,7 +39,6 @@ def fbLogin(request):
                 login(request, user)
                             
                 # @todo: see Instagram Redis session example
-                request.session['uid'] = user.username
                             
                 # successful login
                 return put_json({'status' : 'success'})
@@ -63,7 +63,6 @@ def fbLogin(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    request.session['uid'] = user.username
 
                     # sucesss
                     return put_json({'status' : 'success'})
@@ -77,10 +76,31 @@ def fbLogin(request):
     else:
         return put_json({'status' : 'error', 'message' : 'FB error'})
 
+"""
+Logout 
+"""
 def _logout(request):
     logout(request)
     return put_json({'status' : 'success'})
 
+"""
+Form for new event submission
+"""
+class NewEventForm(forms.Form):
+    title = forms.CharField()
+    address = forms.CharField()
+    type = forms.CharField()
+    datetime = forms.CharField()
+
+"""
+Persist a new event 
+"""
+def newEvent(request):
+    newEvent = NewEventForm(request.POST)
+    event = newEvent.save()
+    
+    if event is not None:
+        
 """
 Helper method for returning JSON content
 """
