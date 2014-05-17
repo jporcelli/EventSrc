@@ -3,17 +3,49 @@
  */
 
 html {
-	height: 100%
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	height: 100%;
 }
 
 body {
+	overflow: hidden;
 	height: 100%;
-	margin: 0;
-	padding: 0
+}
+
+.btn {
+    top:10px;
+    left: 10px;
+    z-index:2;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#gmaps_home_li {
+	margin-right: 15px;
+	border-radius: 4px;
+	padding: 0px 5px 0px 5px;
+}
+
+#controls {
+	margin-top: 15px;
 }
 
 div#central_container {
+	height: 100%;
+}
 
+#eventfilter_location {
+	margin-bottom: 15px;
+}
+
+#eventfilter_location_input {
+	width: 50%;
 }
 
 .header {
@@ -29,10 +61,9 @@ div#central_container {
 	width: 95%;
 }
 
-div#new_event_datetime_con{
+div#new_event_datetime_con {
 	margin-top: 15px;
 }
-
 
 #type_newevent_select {
 	height: 120px;
@@ -74,16 +105,24 @@ input, textarea, .uneditable-input {
 }
 
 div#left_middle_area {
-	width: 70%;
-	height: 700px;
+	width: 40%;
+	height: 100%;
 	float: left;
 	padding-top: 25px;
 	padding-left: 25px;
 }
 
+div#right_middle_area {
+	float: left;
+	height: 100%;
+	width: 35%;
+	padding-top: 25px;
+}
+
 div#right_side_bar {
-	width: 25%;
-	float: right;
+	width: 20%;
+	height: 100%;
+	float: left;
 	padding-top: 25px;
 }
 
@@ -108,6 +147,6 @@ div#new_event {
 }
 
 #map-canvas {
-	height: 100%
+	height: 500px;
 }
 

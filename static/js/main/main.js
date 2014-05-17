@@ -21,7 +21,10 @@ function main_onload() {
 	var fb_test1 = '1446699458905329';
 	var fb_dev = '1446696428905632';
 
-	$('#type_filter_select').chosen();
+	$('#type_filter_select').chosen({
+		width: "35%",
+	}
+	);
 	$('#type_newevent_select').chosen();
 
 	$("#login").dialog({
@@ -49,6 +52,7 @@ function main_onload() {
 	$('#datetimepicker').datetimepicker({
 		closeOnDateSelect : false,
 		lazyInit : true,
+		 format:'Y-m-d H:i'
 	});
 
 	$('#datetime_calndr-icon').hover(function() {
@@ -95,10 +99,6 @@ function main_onload() {
 
 	//Validate the new event form
 	$('#neweventform').validate({
-		submitHandler : function(form) {
-			processNewEvent(form);
-		},
-
 		errorPlacement : function(error, element) {
 			console.log('new event form validation');
 			console.log(error);
@@ -106,6 +106,37 @@ function main_onload() {
 			error.appendTo(element.parent('div'));
 		},
 	});
+	
+	$('#neweventform').on('submit', function(e){
+		var form = $("#neweventform");
+		var valid = form.valid();
+        
+        if(valid)
+        {
+            e.preventDefault();
+            console.log(form);
+            processNewEvent(form);
+        }
+	});
+	
+	$('#gmaps_home_li').click(function(e){
+		console.log('Gmaps go to current location');
+		
+		navigator.geolocation.getCurrentPosition(goHome);
+	});
+	
+	$('#gmaps_home_li').hover(function() {
+		$(this).css('cursor', 'pointer');
+	}, function() {
+		$(this).css('cursor', '');
+	});
+}
+
+function goHome(position){
+	var lat = position.coords.latitude;
+ 	var lng = position.coords.longitude; 
+ 	
+ 	map.setCenter(new google.maps.LatLng(lat, lng));
 }
 
 //@TODO - needed??
@@ -270,12 +301,14 @@ function processNewEvent(form) {
 	console.log('processing new event form submission');
 	console.log('Event information has been validated');
 	
+	console.log(form);
+	
 	//Form data
-	var title = form.find("input[name='title']");
-	var address = form.find("input[name='location']");
-	var type = form.find("input[name='type']");
-	var datetime = form.find("input[name='datetime']");
-	var description = form.find("textarea[name='description']");
+	var title = form.find("input[name='title']").val();
+	var address = form.find("input[name='address']").val();
+	var type = form.find("input[name='type']").val();
+	var datetime = form.find("input[name='datetime']").val();
+	var description = form.find("textarea[name='description']").val();
 	
 	//Info window markup
 	var gmapsMarkerEventDisplay = 
@@ -290,30 +323,52 @@ function processNewEvent(form) {
 		</div>';
 
 	//Obtain lat,lng conversion from address with geocode
-
+	
+	console.log(address);
 	geoCodeAddress({
 		'address' : address
 	}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
 			console.log('Google maps geocoding response');
 			console.log(results);
+			
+			console.log(datetime);
+			console.log(csrftoken);
+			
+			$.ajaxSetup({
+			    crossDomain: false, // obviates need for sameOrigin test
+			    beforeSend: function(xhr, settings) {
+			        if (!csrfSafeMethod(settings.type)) {
+			            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			        }
+			    }
+			});
+			
+			var csrftoken = $.cookie('csrftoken');
 
 			//persist the new event
 			$.ajax({
 				dataType : 'json',
+				type: 'POST',
 				url : '/Event/Submit/',
 				data : {
 					'title' : title,
 					'description' : description,
 					'address' : address,
 					'type' : type,
-					'datetime' : datetime,
-					 'lat' : results[0].geometry.location.lat(),
-					 'lng' : results[0].geometry.location.lng(),
+					'event_date' : String(datetime),
+					'latitude' : results[0].geometry.location.lat(),
+					'longitude' : results[0].geometry.location.lng(),
 				},
 				success : function(data) {
 					console.log('Django response from new event submission');
 					console.log(data);
+					
+					if(data.status === 'error'){
+						$(form).append($('<p style="color: #f00;">'+ data.message + '</p>'));
+					}else{
+						$("#new_event").dialog('close');
+					}
 				}
 			});
 
@@ -340,6 +395,11 @@ function processNewEvent(form) {
 			//Geocode failed, check the status code
 		}
 	});
+}
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
 function geoCodeAddress(address, callback) {

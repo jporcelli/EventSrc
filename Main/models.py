@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.forms import ModelForm
 
 
 class Event(models.Model):
@@ -9,7 +10,12 @@ class Event(models.Model):
     address = models.CharField(max_length = 150)
     description = models.TextField()
     title = models.CharField(max_length = 150)
-    contact_phone = models.CharField(max_length = 45)
-    contact_email = models.EmailField()
-    event_startdate = models.DateTimeField()
-    event_enddate = models.DateTimeField()
+    contact_phone = models.CharField(max_length = 45, null=True)
+    contact_email = models.EmailField(null=True)
+    event_date = models.DateTimeField()
+    event_end_date = models.DateTimeField(null=True)
+    
+class EventForm(ModelForm):
+    class Meta:
+        model = Event
+        exclude = ('owner', 'contact_phone', 'contact_email', 'event_end_date')

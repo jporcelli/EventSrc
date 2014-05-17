@@ -22,7 +22,7 @@
 		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}/include/chosen_v1.1.0/chosen.min.css" />
 		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}include/bootstrap-datetimepicker-0.0.11/css/bootstrap-datetimepicker.min.css" />
 		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}include/datetimepicker-master/jquery.datetimepicker.css" />
-		
+
 		<script type="text/javascript"
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzCYO6VZl72pwbB_XYHU5FqhYRlaDtQ_Y&sensor=false"></script>
 	</head>
@@ -38,6 +38,9 @@
 								<form class="navbar-search pull-left" id="event_basic_srch">
 									<input type="text" class="search-query" placeholder="Search" style="font-size: 16px;">
 								</form>
+							</li>
+							<li id="gmaps_home_li">
+								<span id="gmaps_home" class="btn "><i class="icon-home"></i></span>
 							</li>
 							<li>
 								<a href="#">Advanced Search</a>
@@ -65,22 +68,19 @@
 				</div>
 			</div>
 		</div>
-		<div id="user_block">
-
-		</div>
 
 		<div id="central_container" style="clear: both;">
 			<div id="left_middle_area">
 				<div id="map-canvas"></div>
-			</div>
-
-			<div id="right_side_bar">
 				<div id="controls">
+					<div id="eventfilter_title">
+						<span>Filter By</span>
+					</div>
 					<form id="filters">
+						<div id="eventfilter_location">
+							<input type="text" id="eventfilter_location_input" placeholder="Location" />
+						</div>
 						<div id="type_filter">
-							<div id="eventfilter_title">
-								<span>Filter By</span>
-							</div>
 							<div id="eventfilter_select">
 								<select multiple class="chosen-select" id="type_filter_select" data-placeholder="Event Type" tabindex="-1" multiple>
 									<!-- @TODO - Load all options using XHR from server -->
@@ -88,12 +88,15 @@
 									<option>night club event</option>
 								</select>
 							</div>
-							<div id="eventfilter_location">
-								<input type="text" placeholder="Location" />
-							</div>
 						</div>
 					</form>
 				</div>
+			</div>
+			<div id="right_middle_area">
+
+			</div>
+
+			<div id="right_side_bar">
 				<div id="cur_event_info"></div>
 				<div id="top_events"></div>
 			</div>
@@ -128,7 +131,8 @@
 			</div>
 		</div>
 		<div id="new_event">
-			<form id="neweventform" method="post" action="#">
+			<form id="neweventform">
+				{% csrf_token %}
 				<div class="control-group">
 					<div class="controls">
 						<!--<label for="evt_title">Please provide a title for the event</label>-->
@@ -141,7 +145,7 @@
 						<input name="address" type="text" id="evt_location" placeholder="Event Address" class="new_event_inputfield" required>
 					</div>
 				</div>
-				<textarea rows="6" name="descrioption" id="event_description" placeholder="Event Description" class="new_event_textfield" style="margin-bottom: 15px;"></textarea>
+				<textarea rows="6" name="description" id="event_description" placeholder="Event Description" class="new_event_textfield" style="margin-bottom: 15px;"></textarea>
 				<div class="control-group">
 					<!--<label for="type_newevent_select">Please categorize the type of the event</label>-->
 					<select required name="type" class="chosen-select" id="type_newevent_select" data-placeholder="Event Type" tabindex="-1">
@@ -160,21 +164,20 @@
 				</div>
 				<div class="control-group">
 					<div class="controls">
-						<button type="submit" id="submit_newevent" class="btn" onclick="create_event">
+						<button type="submit" class="btn">
 							Create
 						</button>
 					</div>
 				</div>
 			</form>
 		</div>
-		
-		<input type="hidden" id="date_store" />
 
 		<script type="text/javascript" src="{{STATIC_URL}}js/jquery-1.10.2.js"></script>
 		<script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.10.4.custom.min.js"></script>
 		<script type="text/javascript" src="{{STATIC_URL}}include/chosen_v1.1.0/chosen.jquery.min.js"></script>
 		<script type="text/javascript" src="{{STATIC_URL}}include/datetimepicker-master/jquery.datetimepicker.js"></script>
 		<script type="text/javascript" src="{{STATIC_URL}}include/jquery-validation-1.12.0/dist/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="{{STATIC_URL}}include/carhartl-jquery-cookie-92b7715/jquery.cookie.js"></script>
 		<script type="text/javascript" src="{{STATIC_URL}}js/main/main.js"></script>
 	</body>
 </html>

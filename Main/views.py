@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django import forms
+from Main.models import Event, EventForm
+from django.views.decorators.csrf import csrf_protect
 import urllib2
 import json
 
@@ -12,6 +14,7 @@ import json
 """
 Load EventSrc main page
 """
+@csrf_protect
 def home(request):
     temp = loader.get_template('main.html')
     context = RequestContext(request, {})
@@ -87,22 +90,18 @@ def _logout(request):
 Persist a new event 
 """
 def newEvent(request):
-    title = request.POST.get('title')
-    description = request.POST.get('description')
-    address = request.POST.get('address')
-    type = request.POST.get('type')
-    datetime = request.POST.get('datetime')
-    lat = request.POST.get('lat')
-    lng = request.POST.get('lng')
+    eventForm = EventForm(request.POST)
     
-    
-    #If this doesnt work, @todo: does the sessionid cookie correspond to the _id PK
-    #of users in the DB? if so simply set the uid field to that PK value
-    user = request.session['user']
-    
-    event = Event(owner=user.id, )
-    
-    if event is not None:
+    if eventForm.is_valid():  
+        event = eventForm.save(commit=False)
+        
+        user = request.user
+        event.owner = user
+        
+        #@todo: Add event creator contact information from user object or seperatly
+        
+        event.save()
+      
         return put_json({'status' : 'success'})
     else:
         return put_json({'status' : 'error', 'message' : 'event not saved'})
