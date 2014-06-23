@@ -1,22 +1,26 @@
 from django.conf.urls import patterns, include, url
 from EventSource import settings
 from django.conf.urls.static import static
+from Login.views import Login
 
 from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = [
-    # Examples:
-    #url(r'^$', 'EventSource.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
     
-    url(r'^$', 'Main.views.home', name = 'home'),
+    url(r'^$', Login.as_view(), name = 'home'),
     
-    url(r'^Login/Fb/$', 'Main.views.fbLogin', name = 'fblogin'),
+    url(r'^Home/$', 'Main.views.home', name = 'main'),
     
-    url(r'^Logout/$', 'Main.views._logout', name = 'logout'),
+    url(r'^Login/Fb/$', 'Login.views.fbLogin', name = 'fblogin'),
+    
+    url(r'^Login/$', Login.as_view(), name = 'login'),
+    
+    url(r'^Logout/$', 'Login.views._logout', name = 'logout'),
     
     url(r'^Event/Submit/$', 'Main.views.newEvent', name = 'newevent'),
+    
+    url(r'^NewEvent/EventPhoto/Upload/', 'Main.views.newEventFileUpload', name = 'newEvent_fileUpload'),
 
     url(r'^admin/', include(admin.site.urls))]  
     

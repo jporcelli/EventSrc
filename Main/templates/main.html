@@ -14,170 +14,311 @@
 		<meta name="viewport" content="width=device-width; initial-scale=1.0">
 
 		<!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
-		<link rel="shortcut icon" href="/favicon.ico">
-		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/main/main.css" />
-		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery-ui-1.10.4.custom.min.css" />
-		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}/include/chosen_v1.1.0/chosen.min.css" />
-		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}include/bootstrap-datetimepicker-0.0.11/css/bootstrap-datetimepicker.min.css" />
-		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}include/datetimepicker-master/jquery.datetimepicker.css" />
 
-		<script type="text/javascript"
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzCYO6VZl72pwbB_XYHU5FqhYRlaDtQ_Y&sensor=false"></script>
+		<link rel="stylesheet" href="{{STATIC_URL}}css/bootstrap.min.css"/>
+		<link rel="stylesheet" href="{{STATIC_URL}}css/chosen-plugin_bootstrap-theme.css"/>
+		<link rel="stylesheet" href="{{STATIC_URL}}css/main/main.css" />
+		<link rel="stylesheet" href="{{STATIC_URL}}css/jquery-ui-1.10.4.custom.min.css" />
+		<link rel="stylesheet" href="{{STATIC_URL}}include/chosen_v1.1.0/chosen.min.css" />
+		<link rel="stylesheet" href="{{STATIC_URL}}include/bootstrap-datetimepicker-0.0.11/css/bootstrap-datetimepicker.min.css" />
+		<link rel="stylesheet" href="{{STATIC_URL}}include/datetimepicker-master/jquery.datetimepicker.css" />
+		<link rel="stylesheet" href="{{STATIC_URL}}include/jQuery-File-Upload-9.5.7/css/jquery.fileupload.css" />
+		<link rel="stylesheet" href="{{STATIC_URL}}include/jQuery-File-Upload-9.5.7/css/jquery.fileupload-ui.css" />
+
+		<!-- Should this be loaded before the page body of after? -->
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzCYO6VZl72pwbB_XYHU5FqhYRlaDtQ_Y&sensor=false"></script>
 	</head>
 
 	<body>
-		<div class="container-fluid">
-			<div class="navbar navbar-static-top">
-				<div class="navbar-inner">
-					<div class="container" style="width: 100%;">
-						<ul class="nav">
-							<li>
-								<a class="brand" href="#" style="float: left;">Event Source</a>
-								<form class="navbar-search pull-left" id="event_basic_srch">
-									<input type="text" class="search-query" placeholder="Search" style="font-size: 16px;">
-								</form>
-							</li>
-							<li id="gmaps_home_li">
-								<span id="gmaps_home" class="btn "><i class="icon-home"></i></span>
-							</li>
-							<li>
-								<a href="#">Advanced Search</a>
-							</li>
-							<li>
-								<a href="#" id="launch_newevtUI">New Event</a>
-							</li>
-							<li>
-								{% if user.is_authenticated %}
-								<a href="#" id="logout">Logout</a>
-								{% else %}
-								<a href="#" id="launch_loginUI">Login</a>
-								{% endif %}
-							</li>
-							<li>
-								<a href="#" id="launch_helpUI">Help</a>
-							</li>
-							<li>
-								{% if user.is_authenticated %}
-								<a href="#">{{user.username}}</a>
-								{% endif %}
-							</li>
-						</ul>
-					</div>
+		{% load main_extras %}
+		<div id="fb-root"></div>
+		<script>
+			( function(d, s, id) {
+					var js, fjs = d.getElementsByTagName(s)[0];
+					if (d.getElementById(id))
+						return;
+					js = d.createElement(s);
+					js.id = id;
+					js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=1446696428905632&version=v2.0";
+					fjs.parentNode.insertBefore(js, fjs);
+				}(document, 'script', 'facebook-jssdk'));
+		</script>
+
+		<!-- Navigation and header container -->
+		<div class="navbar navbar-default navbar-static-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">Event Source</a>
 				</div>
+				<ul class="nav navbar-nav">
+					<li>
+						<form class="navbar-form navbar-left" role="search">
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="Search">
+							</div>
+						</form>
+					</li>
+					<li>
+						<a href="#event_content_tabs" id="event_content_window" title="Return To Event Content">Home</a>
+					</li>
+					<li>
+						<a href="#filters_container" id="filters_window" title="Alter Search Filters">Filters</a>
+					</li>
+					<li>
+						<a href="#new_event" id="new_event_window" title="Create A New Event">New Event</a>
+					</li>
+					<li>
+						{% if user.is_authenticated %}
+						<a href="/Logout/" id="logout">Logout</a>
+						{% else %}
+						<a href="/Login/">Login</a>
+						{% endif %}
+					</li>
+					<li>
+						<a href="#" id="launch_helpUI">Help</a>
+					</li>
+					<li>
+						{% if user.is_authenticated %}
+						<a href="#">{{user.username}}</a>
+						{% endif %}
+					</li>
+					<li>
+						<div class="status_message" id="status_message"><img id="loading" src="{{STATIC_URL}}img/ajax-loader.gif" />
+							<span class="notification"></span>
+						</div>
+					</li>
+				</ul>
 			</div>
 		</div>
-
-		<div id="central_container" style="clear: both;">
+		<div class="container" id="central_container">
 			<div id="left_middle_area">
 				<div id="map-canvas"></div>
 				<div id="controls">
-					<div id="eventfilter_title">
-						<span>Filter By</span>
+					<!-- Only activate the link when new results are available, or when the position is moved off home -->
+					<ul class="list-group">
+						<li class="list-group-item" id="refresh_map">
+							<span class="span_anchor" id="refresh_results" data-new_events_available="{{new_events_available}}" title="(0) New Events Available">Refresh Results</span>
+						</li>
+						<li class="list-group-item" id="return_home">
+							<span class="span_anchor" id="return_home" data-home_location="{{home_location}}" title="Go To Current Location">Return to Current Location</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div id="right_middle_area">
+				<div id="event_content_tabs">
+					<ul>
+						<li>
+							<a href="#events_in_area">Area Events</a>
+						</li>
+						<li>
+							<a href="#events_created">Created Events</a>
+						</li>
+						<li>
+							<a href="#my_events">Planned Events</a>
+						</li>
+					</ul>
+					<div id="events_in_area">
+						<h5 id="events_in_area_header" data-events_in_area_list_length="{{events_in_area|length}}">Events In Youre Area ({{events_in_area|length}})</h5>
+						<ul id="events_in_area_list" class="simple_plain">
+							{% if events_in_area|length > 0 %}
+
+							{% for event in events_in_area %}
+							<li class="area_event_li">
+								<div class="area_event" data-event_id="{{event.id}}">
+									<span class="event_title">{{event.title}}</span>
+									<hr />
+									<span class="event_date">{{event.event_date}}</span>
+									<p class="event_description">
+										{{event.description}}
+									</p>
+								</div>
+							</li>
+							{% endfor %}
+
+							{% else %}
+							<li>
+								<p>
+									No events in this area
+								</p>
+							</li>
+							{% endif%}
+						</ul>
 					</div>
-					<form id="filters">
-						<div id="eventfilter_location">
-							<input type="text" id="eventfilter_location_input" placeholder="Location" />
+					<div id="events_created">
+						<h5 id="events_created_header" data-events_created_list_length="{{events_created|length}}">Events Created ({{events_created|length}})</h5>
+						<ul id="events_created_list" class="simple_plain">
+							{% if user.is_authenticated %}
+
+							{% if events_created|length > 0 %}
+
+							{% for event in events_created %}
+							<li class="events_created_li">
+								<div class="event_owner" data-event_id="{{event.id}}">
+									<span class="event_title">{{event.title}}</span>
+									<hr />
+									<span class="event_date">{{event.event_date}}</span>
+									<p class="event_description">
+										{{event.description}}
+									</p>
+								</div>
+							</li>
+							{% endfor %}
+
+							{% else %}
+							<li>
+								<p>
+									No created events available
+								</p>
+							</li>
+							{% endif %}
+
+							{% else %}
+							<li>
+								<span>Please login</span>
+							</li>
+							{% endif %}
+						</ul>
+					</div>
+				</div>
+
+				<!-- @TODO Add functionality to share the created event on facebook if desired -->
+				<div id="new_event" class="container">
+					<h4>Create A New Event</h4>
+					<form id="neweventform" role="form">
+						{% csrf_token %}
+						<div class="form-group">
+							<label>Event Title</label>
+							<input name="title" type="text" id="event_title" placeholder="Event Title" class="form-control event_field" required>
 						</div>
-						<div id="type_filter">
-							<div id="eventfilter_select">
-								<select multiple class="chosen-select" id="type_filter_select" data-placeholder="Event Type" tabindex="-1" multiple>
-									<!-- @TODO - Load all options using XHR from server -->
+						<div class="form-group">
+							<label>Event Address</label>
+							<input name="address" type="text" id="event_location" placeholder="Event Address" class="form-control event_field" required>
+							<input type="checkbox" id="map_click_event_location" />
+							<label style="font-weight: normal">Specify event location by map click selection</label>
+							<input type="hidden" name="latitude" id="event_lat">
+							<input type="hidden" name="longitude" id="event_lng">
+						</div>
+						<div class="form-group">
+							<label>Event Description</label>
+							<textarea rows="4" name="description" id="event_description" placeholder="Event Description" class="form-control event_field" style="margin-bottom: 15px;"></textarea>
+						</div>
+						<div class="form-group">
+							<label>Event Type</label>
+							<div>
+								<select style="width: 35%;" required name="type"  id="event_type_select" data-placeholder="Event Type" tabindex="-1">
+									<!-- @TODO - Load all options from server -->
+									<option></option>
 									<option>concert</option>
 									<option>night club event</option>
 								</select>
 							</div>
 						</div>
+						<div class="form-group">
+							<label>Event Date/Time</label>
+							<div id="datetimepicker_container" class="input-append date">
+								<input placeholder="Event Time" name="event_date" data-format="dd/MM/yyyy hh:mm:ss" type="text" style="font-size: 16px;" id="datetimepicker" required>
+								<span class="add-on" id="datetime_calndr-icon"> <i class="icon-calendar"> </i> </span>
+							</div>
+						</div>
+						<div class="form-group">
+							<span class="btn btn-success fileinput-button"> <i class="glyphicon glyphicon-plus"></i> <span>Upload Files For The Event</span>
+								<!-- Will this mess with the form submission when submitted? -->
+								<input id="fileupload" type="file" name="files[]" multiple>
+							</span>
+							<br />
+							<br />
+							<div id="progress" class="progress">
+								<div class="progress-bar progress-bar-success"></div>
+							</div>
+							<div id="files" class="files"></div>
+						</div>
+						<div class="form-group">
+							<div class="controls">
+								<button type="submit" class="btn btn-primary">
+									Create
+								</button>
+								<button class="btn btn-danger" onclick="$('#event_content_window').click(); return false;">
+									Cancel
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div id="filters_container" class="container">
+					<h4>Event Filters</h4>
+					<form id="filters" role="form">
+						<div class="form-group">
+							<label>Search Radius</label>
+							<div>
+								<select style="width: 35%;" id="filter_radius_select" data-placeholder="Search Radius (km)" tabindex="-1">
+									<option></option>
+									<option>5</option>
+									<option>10</option>
+									<option>15</option>
+									<option>20</option>
+									<option>25</option>
+									<option>30</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label>Event Type</label>
+							<div>
+								<select style="width: 35%;" id="filter_type_select" data-placeholder="Event Type" tabindex="-1">
+									<!-- @TODO - Load all options using response data from server -->
+									<option></option>
+									<option>concert</option>
+									<option>night club event</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="controls">
+								<button type="submit" class="btn btn-primary">
+									Create
+								</button>
+								<button class="btn btn-danger">
+									Cancel
+								</button>
+							</div>
+						</div>
 					</form>
 				</div>
 			</div>
-			<div id="right_middle_area">
-
-			</div>
-
-			<div id="right_side_bar">
-				<div id="cur_event_info"></div>
-				<div id="top_events"></div>
-			</div>
-
+			<div id="right_side_bar"></div>
 		</div>
 
-		<div id="login">
-			<form id="loginform">
-				<div class="control-group">
-					<div class="controls">
-						<input type="text" id="inputEmail" placeholder="Email">
-					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<input type="password" id="inputPassword" placeholder="Password">
-					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<label class="checkbox">
-							<input type="checkbox">
-							Remember me </label>
-						<button type="submit" class="btn">
-							Sign in
-						</button>
-					</div>
-				</div>
-			</form>
-			<div id="fbauth">
-				<fb:login-button scope="public_profile,email" onlogin="fbCheckLoginState();"></fb:login-button>
-			</div>
-		</div>
-		<div id="new_event">
-			<form id="neweventform">
-				{% csrf_token %}
-				<div class="control-group">
-					<div class="controls">
-						<!--<label for="evt_title">Please provide a title for the event</label>-->
-						<input name="title" type="text" id="evt_title" placeholder="Event Title" class="new_event_inputfield" required>
-					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<!--<label for="evt_location">Please provide a location for the event</label>-->
-						<input name="address" type="text" id="evt_location" placeholder="Event Address" class="new_event_inputfield" required>
-					</div>
-				</div>
-				<textarea rows="6" name="description" id="event_description" placeholder="Event Description" class="new_event_textfield" style="margin-bottom: 15px;"></textarea>
-				<div class="control-group">
-					<!--<label for="type_newevent_select">Please categorize the type of the event</label>-->
-					<select required name="type" class="chosen-select" id="type_newevent_select" data-placeholder="Event Type" tabindex="-1">
-						<!-- @TODO - Load all options using XHR from server -->
-						<option></option>
-						<option>concert</option>
-						<option>night club event</option>
-					</select>
-					<div id="new_event_datetime_con">
-						<div id="datetimepicker_container" class="input-append date">
-							<!--<label for="datetimepicker">Please provide the date and time for the event</label>-->
-							<input placeholder="Event Time" name="datetime" data-format="dd/MM/yyyy hh:mm:ss" type="text" style="width: 95%; font-size: 16px;" id="datetimepicker" required>
-							<span class="add-on" id="datetime_calndr-icon"> <i class="icon-calendar"> </i> </span>
-						</div>
-					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<button type="submit" class="btn">
-							Create
-						</button>
-					</div>
-				</div>
-			</form>
-		</div>
+		<script src="{{STATIC_URL}}js/jquery-1.10.2.js"></script>
+		<script src="{{STATIC_URL}}js/jquery-ui-1.10.4.custom.min.js"></script>
+		<script src="{{STATIC_URL}}include/chosen_v1.1.0/chosen.jquery.min.js"></script>
+		<script src="{{STATIC_URL}}include/datetimepicker-master/jquery.datetimepicker.js"></script>
+		<script src="{{STATIC_URL}}include/jquery-validation-1.12.0/dist/jquery.validate.min.js"></script>
+		<script src="{{STATIC_URL}}include/carhartl-jquery-cookie-92b7715/jquery.cookie.js"></script>
+		<script src="{{STATIC_URL}}js/main/main.js"></script>
+		<script src="http://blueimp.github.io/JavaScript-Load-Image/js/load-image.min.js"></script>
+		<script src="http://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
+		<script src="{{STATIC_URL}}include/jQuery-File-Upload-9.5.7/js/jquery.iframe-transport.js"></script>
+		<script src="{{STATIC_URL}}include/jQuery-File-Upload-9.5.7/js/jquery.fileupload.js"></script>
+		<script src="{{STATIC_URL}}include/jQuery-File-Upload-9.5.7/js/jquery.fileupload-process.js"></script>
+		<script src="{{STATIC_URL}}include/jQuery-File-Upload-9.5.7/js/jquery.fileupload-image.js"></script>
+		<script>
+			//We render the events in the map initialization routine once the Google Maps object
+			//is initialized
+			var event_markers = [];
+			
+			var AREA_EVENTS_IDX = 0, CREATED_EVENTS_IDX = 1;
 
-		<script type="text/javascript" src="{{STATIC_URL}}js/jquery-1.10.2.js"></script>
-		<script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.10.4.custom.min.js"></script>
-		<script type="text/javascript" src="{{STATIC_URL}}include/chosen_v1.1.0/chosen.jquery.min.js"></script>
-		<script type="text/javascript" src="{{STATIC_URL}}include/datetimepicker-master/jquery.datetimepicker.js"></script>
-		<script type="text/javascript" src="{{STATIC_URL}}include/jquery-validation-1.12.0/dist/jquery.validate.min.js"></script>
-		<script type="text/javascript" src="{{STATIC_URL}}include/carhartl-jquery-cookie-92b7715/jquery.cookie.js"></script>
-		<script type="text/javascript" src="{{STATIC_URL}}js/main/main.js"></script>
+			events_lkuptbl = {
+				'events_in_area' : 0,
+				'events_created' : 1
+			};
+
+			//Set the events in area list as a global object
+			var events_in_area = jQuery.parseJSON('{{ events_in_area|as_json }}');
+
+			//Set the events created as a global object
+			var events_created = jQuery.parseJSON('{{ events_created|jsonify }}');
+		</script>
 	</body>
 </html>

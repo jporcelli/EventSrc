@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>login</title>
+		<meta name="description" content="">
+		<meta name="author" content="james porcelli">
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css"/>
+		<link rel="stylesheet" href="{{STATIC_URL}}css/login/login.css">
+	</head>
+
+	<body>
+		<div id="fb-root"></div>
+		<script>
+			( function(d, s, id) {
+					var js, fjs = d.getElementsByTagName(s)[0];
+					if (d.getElementById(id))
+						return;
+					js = d.createElement(s);
+					js.id = id;
+					js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=1446696428905632&version=v2.0";
+					fjs.parentNode.insertBefore(js, fjs);
+				}(document, 'script', 'facebook-jssdk'));
+		</script>
+		<div id="wrap">
+			<div class="container">
+				<form role="form" id="evtsrc_loginform" class="form-signin" method="post" action="/Login/">
+					{% csrf_token %}
+					<div class="form-group">
+						<h3 class="form-signin-heading">Please sign in</h3>
+						<hr />
+					</div>
+					<div class="form-group">
+						<label class="pull-left">Email Address</label>
+						<input type="text" name="username" class="input-block-level pull-right form_field" placeholder="Email address">
+					</div>
+					<div class="form-group clearfix" style="clear:both;">
+						<label class="pull-left">Password</label>
+						<input type="password" name="password" class="input-block-level pull-right form_field" placeholder="Password">
+					</div>
+					<label class="checkbox">
+						<input type="checkbox" value="remember-me" style="clear: both;">
+						Remember me </label>
+					<div class="form-group clearfix" id="login_btn_container">
+						<div id="django_login">
+							<button class="btn btn-large btn-primary" type="submit" onclick="djangoLogin">
+								Sign in
+							</button>
+						</div>
+						<div id="fbauth">
+							<div onlogin="fblogin" class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="true"></div>
+						</div>
+					</div>
+					<div id="user_message" class="clearfix">
+						<p class="text-info"> 
+							The recomended login method is with Facebook login. By using Facebook login
+							to access EventSource, and by enabling EventSource access to the requested Facebook
+							profile data, we can optimize you're experience with EventSource.
+						</p>
+					</div>
+					<div id="messages_container">
+						{% if messages %}
+						<ul class="messages">
+							{% for message in messages %}
+							<li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+								{{ message }}
+							</li>
+							{% endfor %}
+						</ul>
+						{% endif %}
+					</div>
+				</form>
+
+			</div>
+			<div id="push"></div>
+		</div>
+
+		<div id="footer">
+			<div class="container">
+				<p class="mutedcredit pull-left">
+					@author James Porcelli
+				</p>
+				<p class="pull-right">
+					Event Source 2014
+				</p>
+			</div>
+		</div>
+		<script type="text/javascript" src="{{STATIC_URL}}js/jquery-1.10.2.js"></script>
+		<script type="text/javascript" src="{{STATIC_URL}}js/login/login.js"></script>
+	</body>
+</html>
