@@ -94,7 +94,7 @@ div#right_side_bar {
 }
 
 #map-canvas {
-	height: 500px;
+	height: 350px;
 }
 
 ul.simple_plain {
@@ -103,8 +103,35 @@ ul.simple_plain {
 	list-style-type: none;
 }
 
+#my_events{
+	
+}
+
+#my_events #my_events_header{
+	font-weight: normal;
+}
+
 #events_created {
 
+}
+
+#my_events_list{
+	margin-top: 15px;
+}
+
+#my_events_list li.planned_event_li{
+	padding: 4px;
+}
+
+#my_events_list li.planned_event_li div.planned_event{
+	padding: 4px;
+	background-color: #fcfefc;
+	border-radius: 4px;
+	border: 1px solid #dedede;
+}
+
+#my_events_list li.planned_event_li div.planned_event hr{
+	margin: 7px 0px;
 }
 
 #events_created #events_created_header {
@@ -159,5 +186,9 @@ ul.simple_plain {
 
 div.event_owner, div.area_event span.event_title, .event_date {
 	display: block;
+}
+
+div.event_marker_display hr {
+	margin: 7px 0px;
 }
 

@@ -12,7 +12,6 @@ var fb_dev = '1446696428905632';
  * 
  */
 function initFiltersWindow(){
-	
   	// Type select for filters
   	$('#filter_type_select').chosen();
   	$('#filter_radius_select').chosen();
@@ -22,7 +21,6 @@ function initFiltersWindow(){
  * 
  */
 function initCreatedEvents(){
-  	
   	// By using jQuery `on` and delegated event handling we can assign handlers
   	// to nodes that exist onload, and in the future
   	
@@ -393,6 +391,8 @@ function formatFileSize(file_size){
 	return file_size + ' bytes';
 }
 
+function
+
 /**
  * On load routine for the document
  */
@@ -603,17 +603,18 @@ function create_event(data) {
 	
 	// List item markup
 	var markup = 
-				'<li class="my_event_li">\
+				'<li class="events_created_li">\
 					<div class="event_owner" data-event_id="' + data.pk + '">\
 						<span class="event_title">' + fields.title + '</span>\
+						<hr />\
 						<span class="event_date">' + fields.event_date + '</span>\
-						<p>' + fields.description + '</p>\
+						<p class="event_description">' + fields.description + '</p>\
 					</div>\
 				</li>';
 	
-	var my_events_list = $('#my_events_list');
+	var my_events_list = $('#events_created_list');
 	
-	var my_events_header = $('#my_events_header');
+	var my_events_header = $('#events_created_header');
 	var events_list_size = my_events_header.attr('data-events_created_list_length');
 	
 	my_events_header.text('Events Created ('+ (eval(events_list_size) + 1) +')');
@@ -729,8 +730,13 @@ function initializeMap(lng, lat) {
 	// We also render the event markers for the other functions but render them as invisible
 	// since they are not part of the on create functionality.
 	renderEventMarkers(event_markers[1], false);
-
-	// @TODO when planned events is developed, include planned events in the initialization
+	
+	// Push to index 2
+	event_markers.push( produceEventMarkers(my_events) );
+	
+	// We also render the event markers for the other functions but render them as invisible
+	// since they are not part of the on create functionality.
+	renderEventMarkers(event_markers[2], false);
 }
 
 /**
@@ -934,10 +940,28 @@ function processNewEvent(form) {
 function eventMarkerMarkup(event){
 	return '<div class="event_marker_display">\
 				<h5 class="event_marker_display_title">' + event.title + '</h5>\
+				<hr />\
 				<p class="event_marker_display_address">' + event.address + '</p>\
 				<p class="event_marker_display_datetime">' + event.datetime + '</p>\
 				<p class="event_marker_display_description">' + event.description + '</p>\
 			</div>'; 
+}
+
+function newEventLiMarkup(data){
+	var fields = data.fields;
+	
+	// List item markup
+	var markup = 
+				'<li class="events_created_li">\
+					<div class="event_owner" data-event_id="' + data.pk + '">\
+						<span class="event_title">' + fields.title + '</span>\
+						<hr />\
+						<span class="event_date">' + fields.event_date + '</span>\
+						<p class="event_description">' + fields.description + '</p>\
+					</div>\
+				</li>';
+				
+	return markup;
 }
 
 /**

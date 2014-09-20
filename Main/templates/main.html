@@ -128,7 +128,7 @@
 								<div class="area_event" data-event_id="{{event.id}}">
 									<span class="event_title">{{event.title}}</span>
 									<hr />
-									<span class="event_date">{{event.event_date}}</span>
+									<span class="event_date">{{event.event_start_date}}</span>
 									<p class="event_description">
 										{{event.description}}
 									</p>
@@ -157,7 +157,7 @@
 								<div class="event_owner" data-event_id="{{event.id}}">
 									<span class="event_title">{{event.title}}</span>
 									<hr />
-									<span class="event_date">{{event.event_date}}</span>
+									<span class="event_date">{{event.event_start_date}}</span>
 									<p class="event_description">
 										{{event.description}}
 									</p>
@@ -172,6 +172,41 @@
 								</p>
 							</li>
 							{% endif %}
+
+							{% else %}
+							<li>
+								<span>Please login</span>
+							</li>
+							{% endif %}
+						</ul>
+					</div>
+					<div id="my_events">
+						<h5 id="my_events_header" data-my_events_length="{{my_events|length}}">My Events ({{my_events|length}})</h5>
+						<ul id="my_events_list" class="simple_plain">
+							{% if user.is_authenticated %}
+
+							{% if my_events|length > 0 %}
+
+							{% for event in my_events %}
+							<li class="planned_event_li">
+								<div class="planned_event" data-event_id="{{event.id}}">
+									<span class="event_title">{{event.title}}</span>
+									<hr />
+									<span class="event_date">{{event.event_start_date}}</span>
+									<p class="event_description">
+										{{event.description}}
+									</p>
+								</div>
+							</li>
+							{% endfor %}
+
+							{% else %}
+							<li>
+								<p>
+									No events planned
+								</p>
+							</li>
+							{% endif%}
 
 							{% else %}
 							<li>
@@ -222,8 +257,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<span class="btn btn-success fileinput-button"> <i class="glyphicon glyphicon-plus"></i> <span>Upload Files For The Event</span>
-								<!-- Will this mess with the form submission when submitted? -->
+							<span class="btn btn-success fileinput-button"> <i class="glyphicon glyphicon-plus"></i> <span>Upload Files For The Event</span> <!-- Will this mess with the form submission when submitted? -->
 								<input id="fileupload" type="file" name="files[]" multiple>
 							</span>
 							<br />
@@ -286,7 +320,9 @@
 					</form>
 				</div>
 			</div>
-			<div id="right_side_bar"></div>
+			<div id="right_side_bar">
+				<!-- TODO - Fill in right side bar with content -->
+			</div>
 		</div>
 
 		<script src="{{STATIC_URL}}js/jquery-1.10.2.js"></script>
@@ -306,12 +342,16 @@
 			//We render the events in the map initialization routine once the Google Maps object
 			//is initialized
 			var event_markers = [];
-			
-			var AREA_EVENTS_IDX = 0, CREATED_EVENTS_IDX = 1;
 
-			events_lkuptbl = {
+			// Indexes into the lookup table
+			var AREA_EVENTS_IDX = 0;
+			var CREATED_EVENTS_IDX = 1;
+			var MY_EVENTS_IDX = 2;
+
+			var events_lkuptbl = {
 				'events_in_area' : 0,
-				'events_created' : 1
+				'events_created' : 1,
+				'my_events' : 2,
 			};
 
 			//Set the events in area list as a global object
@@ -319,6 +359,9 @@
 
 			//Set the events created as a global object
 			var events_created = jQuery.parseJSON('{{ events_created|jsonify }}');
+			
+			//Set my events as a global object
+			var my_events = jQuery.parseJSON('{{my_events|jsonify}}');
 		</script>
 	</body>
 </html>

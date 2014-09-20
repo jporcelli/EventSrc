@@ -32,7 +32,7 @@
 		</script>
 		<div id="wrap">
 			<div class="container">
-				<form role="form" id="evtsrc_loginform" class="form-signin" method="post" action="/Login/">
+				<form role="form" id="evtsrc_loginform" class="form-signin" method="post">
 					{% csrf_token %}
 					<div class="form-group">
 						<h3 class="form-signin-heading">Please sign in</h3>
@@ -51,7 +51,7 @@
 						Remember me </label>
 					<div class="form-group clearfix" id="login_btn_container">
 						<div id="django_login">
-							<button class="btn btn-large btn-primary" type="submit" onclick="djangoLogin">
+							<button class="btn btn-large btn-primary" onclick="djangoLogin(event)">
 								Sign in
 							</button>
 						</div>
